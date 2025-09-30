@@ -1,0 +1,9 @@
+{
+  "HomePage": {
+    "title": "RoastMyProfile - Rate your dating profile with AI",
+    "subtitle": "Get a brutally honest and funny roast of your profile for just $2.99!",
+    "upload": "Upload your photo and bio",
+    "payment": "Secure payment via Stripe",
+    "result": "Your roast is ready!"
+  }
+}

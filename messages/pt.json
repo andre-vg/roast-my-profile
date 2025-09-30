@@ -1,0 +1,9 @@
+{
+  "HomePage": {
+    "title": "RoastMyProfile - Avalie seu perfil de namoro com IA",
+    "subtitle": "Receba um roast honesto e engraçado do seu perfil por apenas R$ 9,90!",
+    "upload": "Envie sua foto e bio",
+    "payment": "Pagamento seguro via Stripe",
+    "result": "Seu roast está pronto!"
+  }
+}

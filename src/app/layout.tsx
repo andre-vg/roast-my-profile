@@ -4,6 +4,8 @@ import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 
 import { TRPCReactProvider } from "@/trpc/react";
+import LocaleProvider from "./LocaleProvider";
+import { ClerkProvider } from "@clerk/nextjs";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -16,14 +18,20 @@ const geist = Geist({
   variable: "--font-geist-sans",
 });
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+type Props = {
+  children: React.ReactNode;
+};
+
+export default async function RootLayout({ children }: Props) {
   return (
-    <html lang="en" className={`${geist.variable}`}>
-      <body>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html className={`${geist.variable}`}>
+        <body>
+          <LocaleProvider>
+            <TRPCReactProvider>{children}</TRPCReactProvider>
+          </LocaleProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
