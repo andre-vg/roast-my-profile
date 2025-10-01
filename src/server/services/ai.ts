@@ -10,7 +10,8 @@ const client = new GoogleGenAI({
   apiKey: process.env.GOOGLE_API_KEY,
 });
 
-const PROMPT_TEMPLATE = `Você é “RoastMyProfile”, um coach de perfis de dating com humor ácido (70%) e conselhos construtivos (30%).
+const PROMPT_TEMPLATE = `
+Você é “RoastMyProfile”, um coach de perfis de dating com humor ácido (70%) e conselhos construtivos (30%).
 
 MISSAO: analisar o perfil fornecido, fazer piadas afiadas, apontar problemas reais e entregar melhorias acionáveis.
 
@@ -40,65 +41,41 @@ DADOS DO PERFIL:
 
 Agora gere a resposta seguindo todas as regras.`;
 
-export const generateRoast = async ({ bio, name, photos }: GenerateRoastInput) => {
+export const generateRoast = async ({
+  bio,
+  name,
+  photos,
+}: GenerateRoastInput) => {
   if (!process.env.GOOGLE_API_KEY) {
     throw new Error("GOOGLE_API_KEY is not set");
   }
 
-  const normalizedName = (name ?? "").trim() || "(sem nome informado)";
-  const normalizedBio = (bio ?? "").trim() || "(nenhuma bio foi enviada)";
-  const normalizedPhotos = sanitizePhotoUrls(photos);
-
-  const profileData = buildProfileData({
-    bio: normalizedBio,
-    name: normalizedName,
-    photos: normalizedPhotos,
-  });
-  const fullPrompt = PROMPT_TEMPLATE.replace("{PROFILE_DATA}", profileData);
-  const encodedPrompt = Buffer.from(fullPrompt, "utf-8").toString("base64");
+  //photos is an array of urls strings
+  const imageParts = await Promise.all(
+    photos.map(async url => {
+      const arrayBuffer = await fetch(url).then(res => res.arrayBuffer());
+      const buffer = Buffer.from(new Uint8Array(arrayBuffer));
+      return {
+        inlineData: {
+          mimeType: "image/jpeg", // Adjust mimeType based on your image type
+          data: buffer.toString('base64'),
+        },
+      };
+    })
+  );
 
   const response = await client.models.generateContent({
     model: "gemini-2.5-flash",
     contents: [
+      ...imageParts,
       {
-        role: "user",
-        parts: [
-          {
-            inlineData: {
-              mimeType: "text/plain",
-              data: encodedPrompt,
-            },
-          },
-        ],
+        text: PROMPT_TEMPLATE.replace(
+          "{PROFILE_DATA}",
+          `Aqui estão algumas informações sobre a pessoa: Nome: ${name}. Biografia: ${bio}`
+        ),
       },
     ],
   });
 
   return response;
-};
-
-const sanitizePhotoUrls = (urls: string[] | undefined) =>
-  Array.isArray(urls)
-    ? urls
-        .filter((url): url is string => typeof url === "string" && url.trim().length > 0)
-        .map(url => url.trim())
-        .slice(0, 5)
-    : [];
-
-const buildProfileData = ({
-  bio,
-  name,
-  photos,
-}: {
-  bio: string;
-  name: string;
-  photos: string[];
-}) => {
-  const photosSection = photos.length
-    ? photos
-        .map((url, index) => `- FOTO ${index + 1}: ${url}`)
-        .join("\n")
-    : "- Nenhuma foto fornecida";
-
-  return `NOME: ${name}\nBIO: ${bio}\nFOTOS:\n${photosSection}`;
 };
