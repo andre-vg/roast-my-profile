@@ -17,9 +17,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/trpc/react";
+import { useState } from "react";
+import { UploadButton } from "@/utils/uploadthing";
 
 const formSchema = z.object({
-  picture: z.string().min(1),
+  pictures: z.any(), // aceita FileList
   name: z.string().min(1),
   Bio: z.string(),
 });
@@ -29,6 +31,7 @@ const stripePromise = loadStripe(
 );
 
 export default function FormProfile() {
+  const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
@@ -37,24 +40,24 @@ export default function FormProfile() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      console.log(values);
-      handleCheckout(values);
+      if (uploadedUrls.length === 0) {
+        toast.error("Envie pelo menos uma foto!");
+        return;
+      }
+      convertAndCheckout(values);
     } catch (error) {
       console.error("Form submission error", error);
       toast.error("Failed to submit the form. Please try again.");
     }
   }
 
-  const handleCheckout = async (formData: z.infer<typeof formSchema>) => {
+  const convertAndCheckout = async (formData: z.infer<typeof formSchema>) => {
     const stripe = await stripePromise;
-
-    const { session } = await useSave.mutateAsync(
-      {
-        photos: [formData.picture],
-        name: formData.name,
-        bio: formData.Bio,
-      }
-    );
+    const { session } = await useSave.mutateAsync({
+      photos: uploadedUrls,
+      name: formData.name,
+      bio: formData.Bio,
+    });
     sessionStorage.setItem("sessionId", session.id);
     await stripe?.redirectToCheckout({
       sessionId: session.id,
@@ -69,15 +72,24 @@ export default function FormProfile() {
       >
         <FormField
           control={form.control}
-          name="picture"
-          render={({ field }) => (
+          name="pictures"
+          render={() => (
             <FormItem>
-              <FormLabel>Select File</FormLabel>
+              <FormLabel>Fotos do perfil (até 3)</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" type="file" {...field} />
+                <UploadButton
+                  endpoint="imageUploader"
+                  onClientUploadComplete={(res) => {
+                    setUploadedUrls(res.map((r) => r.url));
+                    toast.success("Upload concluído!");
+                  }}
+                  onUploadError={(error) => {
+                    toast.error("Erro no upload: " + error.message);
+                  }}
+                />
               </FormControl>
               <FormDescription>
-                This is your public display name.
+                Envie até 3 fotos principais do seu perfil de dating.
               </FormDescription>
               <FormMessage />
             </FormItem>
