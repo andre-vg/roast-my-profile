@@ -9,30 +9,21 @@ export default async function RoastPage({
 }) {
   const { slug } = await params;
 
-  const test = await api.roast.getSessionByHash({ hash: slug });
+  const roastSession = await api.roast.getSessionByHash({ hash: slug });
 
-  if (!test?.session) {
+  if (!roastSession?.session) {
     notFound();
   }
 
   const metadata =
-    (test.session.metadata as Record<string, string | undefined>) ?? {};
+    (roastSession.session.metadata as Record<string, string | undefined>) ?? {};
   const profileName = metadata.name ?? metadata.profile_name ?? "Usuário";
   const profileBio =
     metadata.bio ?? metadata.profile_bio ?? "(bio ainda não informada)";
 
   const photos = metadata.photos ? JSON.parse(metadata.photos) : [];
 
-  const aiResponse = await api.roast.getAIResponse({
-    photos: JSON.stringify(photos),
-    name: profileName,
-    bio: profileBio,
-    roastId: test.roast?.id,
-    roastMessage: test.roast?.message ?? undefined,
-  });
-  const sessionId = test.session.id;
-  const roastReady = Boolean(test.roast?.message);
-  const roastStatus = roastReady ? "Roast pronto" : "Roast em preparação";
+  const sessionId = roastSession.session.id;
 
   return (
     <HydrateClient>
@@ -50,7 +41,7 @@ export default async function RoastPage({
                       {profileName}
                     </h1>
                     <p className="text-sm text-white/70">
-                      Status: {roastStatus}
+                      Status: Roast pronto
                     </p>
                   </div>
                 </div>
@@ -64,13 +55,13 @@ export default async function RoastPage({
               <div className="flex-1 overflow-hidden rounded-2xl border border-white/10 bg-black/30 p-4 backdrop-blur-lg sm:p-6">
                 <div className="flex h-full min-h-[18rem] rounded-xl border border-dashed border-white/20 bg-white/5 sm:min-h-[22rem] lg:min-h-[26rem]">
                   <ChatMessages
-                    roastReady={roastReady}
-                    aiResponse={aiResponse.text ?? ""}
                     myMessage={{
                       profileName,
                       profileBio,
-                      photos
+                      photos,
                     }}
+                    roastId={roastSession.roast?.id}
+                    roastMessage={roastSession.roast?.message || undefined}
                   />
                 </div>
               </div>
@@ -118,7 +109,7 @@ export default async function RoastPage({
                       Fotos enviadas
                     </span>
                     <ul className="mt-2 space-y-1 text-white/80">
-                      {photos.map((url:string, index:number) => (
+                      {photos.map((url: string, index: number) => (
                         <li
                           key={url}
                           className="truncate text-xs text-white/70"
@@ -168,15 +159,7 @@ export default async function RoastPage({
                     Session metadata
                   </h3>
                   <pre className="mt-1 max-h-48 overflow-auto text-[10px] leading-relaxed whitespace-pre-wrap">
-                    {JSON.stringify(test.session.metadata, null, 2)}
-                  </pre>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-white/80">
-                    Resposta da IA
-                  </h3>
-                  <pre className="mt-1 max-h-48 overflow-auto text-[10px] leading-relaxed whitespace-pre-wrap">
-                    {JSON.stringify(aiResponse, null, 2)}
+                    {JSON.stringify(roastSession.session.metadata, null, 2)}
                   </pre>
                 </div>
               </div>
