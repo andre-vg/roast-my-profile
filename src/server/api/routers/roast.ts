@@ -49,6 +49,7 @@ export const roastRouter = createTRPCRouter({
         name: input.name,
         bio: input.bio,
       });
+
       if (response && response.text) {
         // Save the roast to the database
         try {
@@ -58,7 +59,6 @@ export const roastRouter = createTRPCRouter({
             .where(eq(roasts.id, input.roastId as number))
             .returning();
 
-          console.log("Roast salvo no banco de dados:", insertResult);
         } catch (error) {
           console.error("Erro ao salvar roast no banco de dados:", error);
         }
