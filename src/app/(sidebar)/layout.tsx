@@ -9,10 +9,8 @@ export default function SideBarLayout({
   return (
     <SidebarProvider>
       {/* <AppSidebar /> */}
-      <section>
-        {/* <SidebarTrigger /> */}
-        {children}
-      </section>
+      {/* <SidebarTrigger /> */}
+      {children}
     </SidebarProvider>
   );
 }

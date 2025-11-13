@@ -27,53 +27,50 @@ export default async function RoastPage({
 
   return (
     <HydrateClient>
-      <main className="min-h-screen w-full min-w-screen bg-gradient-to-b from-[#1c0f33] via-[#110720] to-[#05020d] px-4 py-8 text-white sm:py-10 lg:py-12">
-        <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 md:flex-row md:gap-8">
-          <section className="flex-1 rounded-3xl border border-white/10 bg-white/5 p-4 shadow-2xl backdrop-blur-xl sm:p-6">
+      <main className="min-h-screen w-full bg-gradient-to-b from-[#0b1220] via-[#0f172a] to-[#05020d] px-4 py-8 text-white">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 md:flex-row md:gap-8">
+          <section className="flex-1 rounded-3xl border border-white/6 bg-white/4 p-4 shadow-2xl backdrop-blur-xl sm:p-6">
             <div className="flex h-full flex-col gap-6">
-              <header className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-lg sm:flex-row sm:items-center sm:justify-between">
+              <header className="flex flex-col gap-4 rounded-2xl border border-white/8 bg-white/5 p-5 backdrop-blur-lg sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex w-full items-center gap-4 sm:w-auto">
-                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-pink-500/80 text-lg font-semibold uppercase sm:text-xl">
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-violet-600 text-lg font-semibold uppercase sm:text-xl">
                     {profileName.charAt(0)}
                   </span>
                   <div>
                     <h1 className="text-lg font-semibold text-white">
                       {profileName}
                     </h1>
-                    <p className="text-sm text-white/70">
+                    <p className="text-sm text-slate-300">
                       Status: Roast pronto
                     </p>
                   </div>
                 </div>
-                <div className="flex flex-wrap items-center gap-2 text-xs text-white/60">
-                  <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-center">
+
+                <div className="flex flex-wrap items-center gap-2 text-xs text-slate-300">
+                  <span className="rounded-full border border-white/8 bg-white/6 px-3 py-1 text-center">
                     Sessão #{sessionId.slice(-6)}
                   </span>
                 </div>
               </header>
 
-              <div className="flex-1 overflow-hidden rounded-2xl border border-white/10 bg-black/30 p-4 backdrop-blur-lg sm:p-6">
+              <div className="flex-1 overflow-hidden rounded-2xl border border-white/8 bg-black/30 p-4 backdrop-blur-lg sm:p-6">
                 <div className="flex h-full min-h-[18rem] rounded-xl border border-dashed border-white/20 bg-white/5 sm:min-h-[22rem] lg:min-h-[26rem]">
                   <ChatMessages
-                    myMessage={{
-                      profileName,
-                      profileBio,
-                      photos,
-                    }}
+                    myMessage={{ profileName, profileBio, photos }}
                     roastId={roastSession.roast?.id}
                     roastMessage={roastSession.roast?.message || undefined}
                   />
                 </div>
               </div>
 
-              <footer className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-lg sm:p-5">
+              <footer className="rounded-2xl border border-white/8 bg-white/5 p-4 backdrop-blur-lg sm:p-5">
                 <div className="flex flex-col items-center gap-3 sm:flex-row">
-                  <div className="flex h-11 w-full items-center rounded-full border border-white/15 bg-white/10 px-4 text-sm text-white/60 sm:h-10 sm:flex-1">
+                  <div className="flex h-11 w-full items-center rounded-full border border-white/15 bg-white/10 px-4 text-sm text-slate-300 sm:h-10 sm:flex-1">
                     Campo de envio em breve
                   </div>
                   <button
                     type="button"
-                    className="w-full cursor-not-allowed rounded-full bg-pink-500/70 px-5 py-2 text-sm font-semibold text-white opacity-60 sm:w-auto"
+                    className="w-full cursor-not-allowed rounded-full bg-pink-600/80 px-5 py-2 text-sm font-semibold text-white opacity-60 sm:w-auto"
                     disabled
                   >
                     Enviar
@@ -84,54 +81,59 @@ export default async function RoastPage({
           </section>
 
           <aside className="flex w-full flex-col gap-4 md:max-w-sm md:gap-5">
-            <div className="rounded-3xl border border-white/10 bg-white/10 p-5 backdrop-blur-xl sm:p-6">
-              <h2 className="text-sm font-semibold tracking-wide text-white/70 uppercase">
+            <div className="rounded-3xl border border-white/8 bg-white/6 p-5 backdrop-blur-xl sm:p-6">
+              <h2 className="text-sm font-semibold tracking-wide text-slate-300 uppercase">
                 Resumo do perfil
               </h2>
-              <div className="mt-4 space-y-4 text-sm text-white/80">
+              <div className="mt-4 space-y-4 text-sm text-slate-300">
                 <div>
-                  <span className="text-xs tracking-wide text-white/60 uppercase">
+                  <span className="text-xs tracking-wide text-slate-400 uppercase">
                     Nome
                   </span>
                   <p className="text-white">{profileName}</p>
                 </div>
                 <div>
-                  <span className="text-xs tracking-wide text-white/60 uppercase">
+                  <span className="text-xs tracking-wide text-slate-400 uppercase">
                     Bio
                   </span>
-                  <p className="whitespace-pre-wrap text-white/80">
+                  <p className="whitespace-pre-wrap text-slate-300">
                     {profileBio}
                   </p>
                 </div>
-                {photos.length > 0 ? (
-                  <div>
-                    <span className="text-xs tracking-wide text-white/60 uppercase">
-                      Fotos enviadas
-                    </span>
-                    <ul className="mt-2 space-y-1 text-white/80">
+
+                <div>
+                  <span className="text-xs tracking-wide text-slate-400 uppercase">
+                    Fotos enviadas
+                  </span>
+                  {photos.length > 0 ? (
+                    <div className="mt-3 grid grid-cols-3 gap-2">
                       {photos.map((url: string, index: number) => (
-                        <li
+                        <a
                           key={url}
-                          className="truncate text-xs text-white/70"
+                          href={url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="block overflow-hidden rounded-md border border-white/8"
                         >
-                          #{index + 1} — {url}
-                        </li>
+                          <img
+                            src={url}
+                            alt={`Foto ${index + 1}`}
+                            className="h-20 w-full object-cover"
+                          />
+                        </a>
                       ))}
-                    </ul>
-                  </div>
-                ) : (
-                  <div>
-                    <span className="text-xs tracking-wide text-white/60 uppercase">
-                      Fotos enviadas
-                    </span>
-                    <p className="text-white/60">Nenhuma foto enviada ainda.</p>
-                  </div>
-                )}
+                    </div>
+                  ) : (
+                    <p className="mt-2 text-slate-400">
+                      Nenhuma foto enviada ainda.
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
 
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-5 text-sm text-white/80 backdrop-blur-xl sm:p-6">
-              <h2 className="text-sm font-semibold tracking-wide text-white/70 uppercase">
+            <div className="rounded-3xl border border-white/8 bg-white/5 p-5 text-sm text-slate-300 backdrop-blur-xl sm:p-6">
+              <h2 className="text-sm font-semibold tracking-wide text-slate-300 uppercase">
                 Próximos passos
               </h2>
               <ul className="mt-3 list-disc space-y-2 pl-5">
@@ -149,13 +151,13 @@ export default async function RoastPage({
               </ul>
             </div>
 
-            <details className="rounded-3xl border border-white/10 bg-black/40 p-4 text-xs text-white/60 sm:p-5">
-              <summary className="cursor-pointer text-white/70">
+            <details className="rounded-3xl border border-white/8 bg-black/40 p-4 text-xs text-slate-400 sm:p-5">
+              <summary className="cursor-pointer text-slate-300">
                 Ver JSON de depuração
               </summary>
               <div className="mt-3 space-y-4">
                 <div>
-                  <h3 className="font-semibold text-white/80">
+                  <h3 className="font-semibold text-slate-300">
                     Session metadata
                   </h3>
                   <pre className="mt-1 max-h-48 overflow-auto text-[10px] leading-relaxed whitespace-pre-wrap">
